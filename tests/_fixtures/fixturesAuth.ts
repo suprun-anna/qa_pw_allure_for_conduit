@@ -10,6 +10,8 @@ export const test = base.extend<{
   signUpPage;
   signInPage;
   homePage;
+  settingsPage: SettingsPage;
+  myProfilePage: MyProfilePage;
 }>({
   signUpPage: async ({ page }, use) => {
     const signUpPage = new SignUpPage(page);
