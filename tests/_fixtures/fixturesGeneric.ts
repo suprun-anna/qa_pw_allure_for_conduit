@@ -1,3 +1,4 @@
+import { rmSync } from 'fs';
 import { test as base } from '@playwright/test';
 import { Logger } from '../../src/common/logger/Logger';
 import { generateNewUserData } from '../../src/common/testData/generateNewUserData';
@@ -16,6 +17,7 @@ export const test = base.extend<
   },
   {
     logger;
+    deleteAllureResults;
   }
 >({
   usersNumber: [1, { option: true }],
@@ -45,17 +47,26 @@ export const test = base.extend<
     await use(users);
   },
   logger: [
-    async ({}, use) => {
+    async ({ }, use) => {
       const logger = new Logger('error');
 
       await use(logger);
     },
     { scope: 'worker' },
   ],
+  deleteAllureResults: [
+    async ({}, use) => {
+      rmSync('allure-results', { recursive: true, force: true });
+
+      await use();
+    },
+    { scope: 'worker', auto: true },
+  ],
   infoTestLog: [
     async ({ logger }, use, testInfo) => {
-      const indexOfTestSubfolderStart = testInfo.file.indexOf('/tests') + 7;
-      const fileName = testInfo.file.substring(indexOfTestSubfolderStart);
+      const normalized = testInfo.file.replaceAll('\\', '/');
+      const indexOfTestSubfolderStart = normalized.indexOf('/tests') + 7;
+      const fileName = normalized.substring(indexOfTestSubfolderStart);
 
       logger.info(`Test started: ${fileName}`);
 

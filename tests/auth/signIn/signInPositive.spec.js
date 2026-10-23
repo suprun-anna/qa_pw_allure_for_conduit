@@ -2,6 +2,7 @@ import { test } from '../../_fixtures/fixtures';
 import { SignInPage } from '../../../src/ui/pages/auth/SignInPage';
 import { HomePage } from '../../../src/ui/pages/HomePage';
 import { signUpUser } from '../../../src/ui/actions/auth/signUpUser';
+import { signInUser } from '../../../src/ui/actions/auth/signInUser';
 
 let signInPage;
 let homePage;
@@ -15,11 +16,6 @@ test.beforeEach(async ({ pages, user }) => {
   homePage = new HomePage(pages[1]);
 });
 
-test('Successful `Sign in` flow test', async ({ user }) => {
-  await signInPage.open();
-  await signInPage.fillEmailField(user.email);
-  await signInPage.fillPasswordField(user.password);
-  await signInPage.clickSignInButton();
-
-  await homePage.assertYourFeedTabIsVisible();
+test('Successful `Sign in` flow test', async ({ pages, user }) => {
+  await signInUser(pages[0], user);
 });
